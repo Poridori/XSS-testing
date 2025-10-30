@@ -1,0 +1,17 @@
+# XSS-testing
+
+Small demo repo for learning about XSS on pages you own.
+
+## Files
+- `index.html` — Reflected XSS demo (vulnerable + safe example).
+- `dom.html` — DOM-based XSS demo (vulnerable + safe example).
+
+## How to use
+1. Push this repo to GitHub under your account (public or private).  
+2. Enable GitHub Pages in repo Settings → Pages, and select the default branch.  
+   Your site will be available at `https://<your-username>.github.io/XSS-testing/` after a minute or two.
+3. Or run locally:
+   ```bash
+   # from the repo folder
+   python -m http.server 8000
+   # open http://localhost:8000/index.html
