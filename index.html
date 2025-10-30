@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>XSS-testing — Reflected demo</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:2rem;} pre{background:#f6f6f6;padding:1rem;border-radius:6px}</style>
+</head>
+<body>
+  <h1>XSS-testing — Reflected XSS demo</h1>
+  <p>This page demonstrates a reflected XSS (vulnerable) and a safe alternative.</p>
+
+  <h2>How to test</h2>
+  <p>Open this page with a query parameter <code>?q=...</code>. Example payloads below.</p>
+
+  <h3>Vulnerable output (DO NOT USE IN PRODUCTION)</h3>
+  <div id="vuln">
+    <!-- vulnerable sink -->
+    Results: <span id="results_vuln"></span>
+  </div>
+
+  <h3>Safe output (uses textContent)</h3>
+  <div id="safe">
+    Safe results: <span id="results_safe"></span>
+  </div>
+
+  <h3>Example test links</h3>
+  <pre id="links"></pre>
+
+  <script>
+    // Helper to get raw q param (no framework)
+    function getQ() {
+      const m = location.search.match(/[?&]q=([^&]*)/);
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+
+    const q = getQ();
+
+    // ---------- VULNERABLE: injecting into innerHTML ----------
+    // Intentionally unsafe: demonstrates what NOT to do.
+    document.getElementById('results_vuln').innerHTML = q;
+
+    // ---------- SAFE: use textContent so text is not parsed as HTML ----------
+    document.getElementById('results_safe').textContent = q;
+
+    // Show example test URLs for convenience
+    const base = location.origin + location.pathname;
+    const payload = encodeURIComponent('<img src=x onerror=alert("xss-reflected")>');
+    const payload2 = encodeURIComponent('<script>alert("xss-reflected-script")</script>');
+    document.getElementById('links').textContent = `${base}?q=${payload}\n${base}?q=${payload2}`;
+
+    // Warn user if no param
+    if (!q) {
+      document.getElementById('results_vuln').textContent = '(no ?q= param provided)';
+      document.getElementById('results_safe').textContent = '(no ?q= param provided)';
+    }
+  </script>
+</body>
+</html>
