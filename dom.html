@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>XSS-testing — DOM-based demo</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:2rem;} pre{background:#f6f6f6;padding:1rem;border-radius:6px}</style>
+</head>
+<body>
+  <h1>XSS-testing — DOM-based XSS demo</h1>
+  <p>This page reads <code>location.hash</code> and writes it into the page. The "vulnerable" area uses <code>innerHTML</code>.</p>
+
+  <h3>Vulnerable</h3>
+  <div id="dom_vuln"></div>
+
+  <h3>Safe</h3>
+  <div id="dom_safe"></div>
+
+  <h3>Example links</h3>
+  <pre id="links"></pre>
+
+  <script>
+    // Read fragment (after '#')
+    const frag = decodeURIComponent(location.hash.slice(1) || '');
+
+    // VULNERABLE: writing fragment into innerHTML
+    document.getElementById('dom_vuln').innerHTML = frag || '(no fragment)';
+
+    // SAFE: use textContent instead
+    document.getElementById('dom_safe').textContent = frag || '(no fragment)';
+
+    const base = location.origin + location.pathname;
+    const payload = encodeURIComponent('<img src=x onerror=alert("xss-dom")>');
+    document.getElementById('links').textContent = `${base}#${payload}`;
+  </script>
+</body>
+</html>
